@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0f0d0c">
+    <meta name="description" content="浏览器里的吉他调音器：标准调音 E A D G B E，自动识别琴弦，音频只在本机处理。">
+    <title>六弦调音器</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="js/app.js"></script>
+</head>
+<body>
+<main class="stage">
+    <section class="pedal" aria-label="吉他调音器">
+        <span class="screw screw-tl" aria-hidden="true"></span>
+        <span class="screw screw-tr" aria-hidden="true"></span>
+        <span class="screw screw-bl" aria-hidden="true"></span>
+        <span class="screw screw-br" aria-hidden="true"></span>
+        <span class="jack jack-in" aria-hidden="true">MIC IN</span>
+        <span class="jack jack-out" aria-hidden="true">OUT</span>
+
+        <header class="pedal-top">
+            <div class="brand">
+                <span class="brand-name">SIX/STRING</span>
+                <span class="brand-sub">GUITAR TUNER · 标准调音 EADGBE</span>
+            </div>
+            <div class="power" aria-hidden="true">
+                <span class="power-led" id="power-led"></span>
+                <span>POWER</span>
+            </div>
+        </header>
+
+        <div class="display" id="display">
+            <div class="meter">
+                <span class="flag" id="flag-flat" aria-hidden="true">◀</span>
+                <div class="leds" id="leds" aria-hidden="true"></div>
+                <span class="flag" id="flag-sharp" aria-hidden="true">▶</span>
+            </div>
+            <div class="scale" aria-hidden="true">
+                <span>−50</span><span>−25</span><span>0</span><span>+25</span><span>+50</span>
+            </div>
+
+            <div class="readout">
+                <div class="note">
+                    <svg id="note-seg" class="seg-display seg-note"></svg>
+                    <svg id="octave-seg" class="seg-display seg-octave"></svg>
+                </div>
+                <div class="numbers">
+                    <div class="number">
+                        <svg id="hz-seg" class="seg-display seg-small"></svg>
+                        <span class="unit">Hz</span>
+                    </div>
+                    <div class="number">
+                        <svg id="cent-seg" class="seg-display seg-small"></svg>
+                        <span class="unit">CENT</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="hint" id="hint" aria-live="polite">按下开关开始调音</p>
+        </div>
+
+        <div class="strings">
+            <div class="strings-head">
+                <span class="mode-led" id="auto-led" aria-hidden="true"></span>
+                <span class="silk">AUTO</span>
+                <span class="strings-tip">点琴弦可锁定，再点一次恢复自动</span>
+            </div>
+            <div class="string-row" id="string-row" role="group" aria-label="选择琴弦"></div>
+        </div>
+
+        <figure class="headstock">
+            <svg viewBox="0 0 120 150" role="img" aria-label="琴头示意图，亮起的旋钮是要拧的那根弦">
+                <path class="hs-body" d="M38 146 L34 18 Q60 2 86 18 L82 146 Z"/>
+                <line class="hs-nut" x1="40" y1="140" x2="80" y2="140"/>
+
+                <g class="hs-strings">
+                    <line data-string="6" x1="45" y1="140" x2="41" y2="102"/>
+                    <line data-string="5" x1="51" y1="140" x2="41" y2="68"/>
+                    <line data-string="4" x1="57" y1="140" x2="41" y2="34"/>
+                    <line data-string="3" x1="63" y1="140" x2="79" y2="34"/>
+                    <line data-string="2" x1="69" y1="140" x2="79" y2="68"/>
+                    <line data-string="1" x1="75" y1="140" x2="79" y2="102"/>
+                </g>
+
+                <g class="hs-pegs">
+                    <g class="peg" data-string="4"><line x1="41" y1="34" x2="20" y2="34"/><circle cx="41" cy="34" r="3"/><rect x="4" y="27" width="16" height="14" rx="6"/></g>
+                    <g class="peg" data-string="5"><line x1="41" y1="68" x2="20" y2="68"/><circle cx="41" cy="68" r="3"/><rect x="4" y="61" width="16" height="14" rx="6"/></g>
+                    <g class="peg" data-string="6"><line x1="41" y1="102" x2="20" y2="102"/><circle cx="41" cy="102" r="3"/><rect x="4" y="95" width="16" height="14" rx="6"/></g>
+                    <g class="peg" data-string="3"><line x1="79" y1="34" x2="100" y2="34"/><circle cx="79" cy="34" r="3"/><rect x="100" y="27" width="16" height="14" rx="6"/></g>
+                    <g class="peg" data-string="2"><line x1="79" y1="68" x2="100" y2="68"/><circle cx="79" cy="68" r="3"/><rect x="100" y="61" width="16" height="14" rx="6"/></g>
+                    <g class="peg" data-string="1"><line x1="79" y1="102" x2="100" y2="102"/><circle cx="79" cy="102" r="3"/><rect x="100" y="95" width="16" height="14" rx="6"/></g>
+                </g>
+            </svg>
+            <figcaption id="peg-hint">亮起的旋钮就是要拧的那根弦</figcaption>
+        </figure>
+
+        <div class="switch-area">
+            <button class="footswitch" id="footswitch" type="button" aria-pressed="false">
+                <span class="sr-only" id="footswitch-label">开始调音</span>
+            </button>
+            <span class="switch-label silk" id="switch-text">点击开始</span>
+        </div>
+    </section>
+
+    <p class="notice" id="notice" role="alert" hidden></p>
+
+    <footer class="tips">
+        <p>安静环境下把手机或电脑靠近琴的音孔，一次只拨一根弦。</p>
+        <p>声音只在你的设备上分析，不会上传。</p>
+    </footer>
+</main>
+</body>
+</html>
